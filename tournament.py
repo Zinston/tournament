@@ -72,23 +72,24 @@ def playerStandings():
 
     db = connect()
     c = db.cursor()
-    c.execute("""create or replace view matches_played as
-                 select players.id as id, players.name as name, coalesce(count(match.id), 0) as matches
-                 from players, match
-                 where players.id = match.winner or players.id = match.loser
-                 group by players.id;""")
-    c.execute("""create or replace view matches_won as
-                 select players.id as id, coalesce(count(match.id), 0) as wins
-                 from players, match
-                 where match.winner = players.id
-                 group by players.id;""")
-    c.execute("""create or replace view playing_players_standings as
-                 select matches_played.id as id, name, wins, matches
-                 from matches_played left join matches_won
-                 on matches_played.id = matches_won.id
-                 group by matches_played.id, matches_played.name, matches_won.wins, matches_played.matches;""")
     c.execute("""select players.id as id, players.name as name, coalesce(playing_players_standings.wins, 0) as wins, coalesce(playing_players_standings.matches, 0) as matches
-                 from players left join playing_players_standings
+                 from players left join
+                    (select matches_played.id as id, name, wins, matches
+                    from
+                      (select players.id as id, players.name as name, coalesce(count(match.id), 0) as matches
+                      from players, match
+                      where players.id = match.winner or players.id = match.loser
+                      group by players.id)
+                      as matches_played
+                    left join
+                      (select players.id as id, coalesce(count(match.id), 0) as wins
+                      from players, match
+                      where match.winner = players.id
+                      group by players.id)
+                      as matches_won
+                    on matches_played.id = matches_won.id
+                    group by matches_played.id, matches_played.name, matches_won.wins, matches_played.matches)
+                    as playing_players_standings
                  on players.id = playing_players_standings.id
                  group by players.id, playing_players_standings.name, playing_players_standings.wins, playing_players_standings.matches
                  order by wins desc;""")
