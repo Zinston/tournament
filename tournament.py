@@ -13,22 +13,25 @@ def connect():
     except psycopg2.Error, e:
       print e
 
+def execute_query(query):
+  """Executes a query in the database.
+
+  Args:
+      query: the sql query string."""
+  db = connect()
+  c = db.cursor()
+  c.execute(query)
+  db.commit()
+  db.close()
+
 def deleteMatches():
     """Remove all the match records from the database."""
-    db = connect()
-    c = db.cursor()
-    c.execute("delete from match;")
-    db.commit()
-    db.close()
+    execute_query("delete from match;")
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    db = connect()
-    c = db.cursor()
-    c.execute("delete from players;")
-    db.commit()
-    db.close()
+    execute_query("delete from players;")
 
 
 def countPlayers():
