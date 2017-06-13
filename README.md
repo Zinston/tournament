@@ -8,6 +8,7 @@ _Tournament_ manages a Swiss-system tournament with a pair number of players.
 
 ## Usage
 * While _Tournament_ contains a few handy functions for managing a Swiss-system tournament, it doesn't actually do anything on its own.
+* Simply put, the code in this repository can be used to build any application requiring the ability to pair players in a Swiss-system tournament.
 * Using `python tournament_test.py` allows you to **test** that all functions in `tournament.py` work.
 * Functions in `tournament.py` allow you to :
   * add, delete and count players
@@ -22,7 +23,7 @@ A [Swiss-system tournament](https://en.wikipedia.org/wiki/Swiss-system_tournamen
 * _Tournament_ only works with **pair** numbers of players.
 
 ## Contributing
-Ideas, contributions and improvements are more than welcome.
+Ideas, contributions and improvements are more than welcome. When adding a feature, please write a test function for it in `tournament_test.py`.
 
 ## License
 _Tournament_ is released under the [MIT License](tournament/LICENSE.txt).
