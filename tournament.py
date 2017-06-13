@@ -14,15 +14,20 @@ def connect():
       print e
 
 def execute_query(query):
-  """Executes a query in the database.
+  """Executes a query in the database. Returns fetched results (None if no results)
 
   Args:
       query: the sql query string."""
   db = connect()
   c = db.cursor()
   c.execute(query)
-  db.commit()
+  try:
+    results = c.fetchall()
+  except:
+    results = None
+    db.commit()
   db.close()
+  return results
 
 def deleteMatches():
     """Remove all the match records from the database."""
@@ -36,11 +41,7 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    db = connect()
-    c = db.cursor()
-    c.execute("select count(id) as num from players;")
-    players = c.fetchall()
-    db.close()
+    players = execute_query("select count(id) as num from players;")
     return int(players[0][0])
 
 
@@ -75,9 +76,7 @@ def playerStandings():
         matches: the number of matches the player has played
     """
 
-    db = connect()
-    c = db.cursor()
-    c.execute("""select players.id as id, players.name as name, coalesce(playing_players_standings.wins, 0) as wins, coalesce(playing_players_standings.matches, 0) as matches
+    return execute_query("""select players.id as id, players.name as name, coalesce(playing_players_standings.wins, 0) as wins, coalesce(playing_players_standings.matches, 0) as matches
                  from players left join
                     (select matches_played.id as id, name, wins, matches
                     from
@@ -98,9 +97,6 @@ def playerStandings():
                  on players.id = playing_players_standings.id
                  group by players.id, playing_players_standings.name, playing_players_standings.wins, playing_players_standings.matches
                  order by wins desc;""")
-    player_standings = c.fetchall()
-    db.close()
-    return player_standings
 
 
 def reportMatch(winner, loser):
