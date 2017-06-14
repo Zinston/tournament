@@ -15,15 +15,19 @@ def connect():
             print e
 
 
-def execute_query(query):
+def execute_query(query, values=None):
     """Executes a query in the database.
        Returns fetched results (None if no results)
 
     Args:
-            query: the sql query string."""
+            query: the sql query string.
+            values: a tuple containing values to insert into the database."""
     db = connect()
     c = db.cursor()
-    c.execute(query)
+    if values is not None:
+        c.execute(query, values)
+    else:
+        c.execute(query)
     try:
         results = c.fetchall()
     except:
@@ -60,11 +64,7 @@ def registerPlayer(name):
             name: the player's full name (need not be unique).
         """
 
-        db = connect()
-        c = db.cursor()
-        c.execute("insert into players (name) values (%s);", (name,))
-        db.commit()
-        db.close()
+        execute_query("insert into players (name) values (%s);", (name,))
 
 
 def playerStandings():
@@ -128,12 +128,8 @@ def reportMatch(winner, loser):
             loser:  the id number of the player who lost
         """
 
-        db = connect()
-        c = db.cursor()
-        c.execute("""insert into match (winner, loser)
+        execute_query("""insert into match (winner, loser)
                      values (%s, %s);""", (winner, loser))
-        db.commit()
-        db.close()
 
 
 def swissPairings():
