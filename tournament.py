@@ -82,41 +82,13 @@ def playerStandings():
         """
 
         return execute_query("""
-            select players.id as id,
-                   players.name as name,
-                   coalesce(playing_players_standings.wins, 0) as wins,
-                   coalesce(playing_players_standings.matches, 0) as matches
-            from players left join
-                (select matches_played.id as id,
-                        name,
-                        wins,
-                        matches
-                from
-                    (select players.id as id,
-                            players.name as name,
-                            coalesce(count(match.id), 0) as matches
-                    from players, match
-                    where players.id = match.winner
-                    or players.id = match.loser
-                    group by players.id)
-                as matches_played left join
-                    (select players.id as id,
-                            coalesce(count(match.id), 0) as wins
-                    from players, match
+            select players.id, players.name,
+                (select count(match.id) from match
+                    where match.winner=players.id) as wins,
+                (select count(match.id) from match
                     where match.winner = players.id
-                    group by players.id)
-                as matches_won
-                on matches_played.id = matches_won.id
-                group by matches_played.id,
-                         matches_played.name,
-                         matches_won.wins,
-                         matches_played.matches)
-            as playing_players_standings
-            on players.id = playing_players_standings.id
-            group by players.id,
-                     playing_players_standings.name,
-                     playing_players_standings.wins,
-                     playing_players_standings.matches
+                    or match.loser = players.id) as match
+            from players
             order by wins desc;""")
 
 
