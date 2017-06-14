@@ -87,7 +87,7 @@ def playerStandings():
                     where match.winner=players.id) as wins,
                 (select count(match.id) from match
                     where match.winner = players.id
-                    or match.loser = players.id) as match
+                    or match.loser = players.id) as matches
             from players
             order by wins desc;""")
 
