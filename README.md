@@ -4,7 +4,8 @@ _Tournament_ manages a Swiss-system tournament with a pair number of players.
 ## Installation
 * Clone the GitHub repository : `git clone https://github.com/Zinston/tournament.git`
 * [Install](https://wiki.postgresql.org/wiki/Detailed_installation_guides) PostgreSQL
-* Initialize the database in PostgreSQL : `\i tournament.sql` (within the tournament root folder)
+* Connect to the PostgreSQL environment : `psql`
+* Initialize the database in PostgreSQL by importing the tournament.sql file : `\i tournament.sql` (within the tournament root folder)
 
 ## Usage
 * While _Tournament_ contains a few handy functions for managing a Swiss-system tournament, it doesn't actually do anything on its own.
